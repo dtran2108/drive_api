@@ -3,6 +3,8 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+import requests
+from json import dump
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -40,9 +42,9 @@ def main():
     if not items:
         print('No files found.')
     else:
-        print('Files:')
-        for item in items:
-            print('{} ({})'.format(item['name'], item['id']))
+        with open('results.json', 'w') as f:
+            dump(items, f)
 
+       
 if __name__ == '__main__':
     main()

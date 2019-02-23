@@ -1,53 +1,45 @@
-from __future__ import print_function
-import httplib2
-import pickle
-import os.path, io
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-import auth
-from apiclient.http import MediaFileUpload, MediaIoBaseDownload
-
-# If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/drive']
-CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Google Drive API Project'
-authInst = auth.Auth(SCOPES, CLIENT_SECRET_FILE, APPLICATION_NAME)
-credentials = authInst.get_credentials()
-drive_service = build('drive', 'v3', credentials=credentials)
+from method import *
 
 
-def list_files(size):
-    results = drive_service.files().list(
-        pageSize=size, fields="nextPageToken, files(id, name)").execute()
-    items = results.get('files', [])
-
-    if not items:
-        print('No files found.')
-    else:
-        print('Files:')
-        for item in items:
-            print(u'{0} ({1})'.format(item['name'], item['id']))
+def get_method(methods):
+    print('Methods: ', end='')
+    for method in methods:
+        print(method, end='\t')
+    print()
+    method = input('Please choose which method to operate: ')
+    return method.lower().strip()
 
 
-def upload_files(file_name, file_path, minetype):
-    file_metadata = {'name': file_name}
-    media = MediaFileUpload(file_path,
-                            mimetype=minetype)
-    file = drive_service.files().create(body=file_metadata,
-                                        media_body=media,
-                                        fields='id').execute()
-    print('File ID: %s' % file.get('id'))
+def main():
+    methods = ['list file', 'upload file', 'download file',
+               'create folder', 'search file', 'delete file']
+    method = get_method(methods)
+    while method not in methods:
+        print('Invalid method.\n')
+        method = get_method(methods)
+    if 'list file' in method:
+        size = input('Please enter the size: ')
+        list_file(size)
+    elif 'upload file' in method:
+        file_name = input('Please enter the file name: ')
+        file_path = input('And the path of the file you want to upload: ')
+        minetype = input('And the type of the file: ')
+        upload_file(file_name, file_path, minetype)
+    elif 'download file' in method:
+        file_id = input('Please enter the file id: ')
+        destination = input('Where you want to store the file: ')
+        download_file(file_id, destination)
+    elif 'create folder' in method:
+        name = input('Please enter the folder name: ')
+        create_folder(name)
+    elif 'search file' in method:
+        size = input('How many file do you want me to search: ')
+        operator = input('Please enter the querry: ')
+        search_file(size, operator)
+    elif 'delete file' in method:
+        id = input('Please enter the file id you want to delete: ')
+        delete_file(id)
 
 
-def download_file(file_id, destination):
-    request = drive_service.files().get_media(fileId=file_id)
-    fh = io.BytesIO()
-    downloader = MediaIoBaseDownload(fh, request)
-    done = False
-    while done is False:
-        status, done = downloader.next_chunk()
-        print("Download %d%%." % int(status.progress() * 100))
-    with io.open(destination, 'wb') as f:
-        fh.seek(0)
-        f.write(fh.read())
+if __name__ == '__main__':
+    main()

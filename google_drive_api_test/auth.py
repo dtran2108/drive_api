@@ -5,6 +5,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
+
 class Auth:
     def __init__(self, SCOPES, CLIENT_SECRET_FILE, APPLICATION_NAME):
         self.SCOPES = SCOPES
@@ -13,9 +14,9 @@ class Auth:
 
     def get_credentials(self):
         creds = None
-        # The file token.pickle stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
+        """ The file token.pickle stores the user's access and refresh
+            tokens, and is created automatically when the authorization
+            flow completes for the first time."""
         if os.path.exists('token.pickle'):
             with open('token.pickle', 'rb') as token:
                 creds = pickle.load(token)

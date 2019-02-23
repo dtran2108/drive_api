@@ -1,8 +1,7 @@
-import os.path
 from io import open as ioOpen, BytesIO
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
-import auth
+from auth import Auth
 from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 from apiclient import errors
 
@@ -11,7 +10,7 @@ from apiclient import errors
 SCOPES = ['https://www.googleapis.com/auth/drive']
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Drive API Project'
-authInst = auth.Auth(SCOPES, CLIENT_SECRET_FILE, APPLICATION_NAME)
+authInst = Auth(SCOPES, CLIENT_SECRET_FILE, APPLICATION_NAME)
 credentials = authInst.get_credentials()
 drive_service = build('drive', 'v3', credentials=credentials)
 
@@ -43,7 +42,7 @@ def download_file(file_id, destination):
     fh = BytesIO()
     downloader = MediaIoBaseDownload(fh, request)
     done = False
-    while done is False:
+    while not done:
         status, done = downloader.next_chunk()
         print("Download %d%%." % int(status.progress() * 100))
     with ioOpen(destination, 'wb') as f:

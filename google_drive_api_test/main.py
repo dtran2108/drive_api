@@ -1,4 +1,5 @@
 from method import *
+from apiclient import errors
 
 
 def get_method(methods):
@@ -42,7 +43,7 @@ def main():
 
 
 if __name__ == '__main__':
-    # try:
+    try:
         main()
-    # except Exception:
-    #     print('An error occured.')
+    except errors.HttpError as error:
+        print('An error occurred: {}'.format(error))

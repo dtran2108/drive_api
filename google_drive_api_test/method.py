@@ -76,7 +76,6 @@ def search_file(size, operator):
 
 def delete_file(file_id):
   """Permanently delete a file, skipping the trash.
-
   Args:
     service: Drive API service instance.
     file_id: ID of the file to delete.

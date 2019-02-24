@@ -9,8 +9,7 @@ from apiclient import errors
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
 CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Google Drive API Project'
-authInst = Auth(SCOPES, CLIENT_SECRET_FILE, APPLICATION_NAME)
+authInst = Auth(SCOPES, CLIENT_SECRET_FILE)
 credentials = authInst.get_credentials()
 drive_service = build('drive', 'v3', credentials=credentials)
 
@@ -27,14 +26,14 @@ def list_file(size):
             print('{}: {}'.format(item['id'], item['name']))
 
 
-def upload_file(file_name, file_path, minetype):
+def upload_file(file_name, file_path, mimetype):
     file_metadata = {'name': file_name}
     media = MediaFileUpload(file_path,
-                            mimetype=minetype)
+                            mimetype=mimetype)
     file = drive_service.files().create(body=file_metadata,
                                         media_body=media,
                                         fields='id').execute()
-    print('File ID: %s' % file.get('id'))
+    print('File ID: {}'.format(file.get('id')))
 
 
 def download_file(file_id, destination):
@@ -44,7 +43,7 @@ def download_file(file_id, destination):
     done = False
     while not done:
         status, done = downloader.next_chunk()
-        print("Download %d%%." % int(status.progress() * 100))
+        print("Download {}.".format(int(status.progress() * 100)))
     with ioOpen(destination, 'wb') as f:
         fh.seek(0)
         f.write(fh.read())
@@ -57,7 +56,7 @@ def create_folder(name):
     }
     file = drive_service.files().create(body=file_metadata,
                                         fields='id').execute()
-    print('Folder ID: %s' % file.get('id'))
+    print('Folder ID: {}'.format(file.get('id')))
 
 
 def search_file(size, operator):
@@ -71,7 +70,7 @@ def search_file(size, operator):
     else:
         print('Files:')
         for item in items:
-            print(u'{0} ({1})'.format(item['name'], item['id']))
+            print(u'{} ({})'.format(item['name'], item['id']))
 
 
 def delete_file(file_id):

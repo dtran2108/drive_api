@@ -24,8 +24,8 @@ def main():
     elif 'upload file' in method:
         file_name = input('Please enter the file name: ')
         file_path = input('And the path of the file you want to upload: ')
-        minetype = input('And the type of the file: ')
-        upload_file(file_name, file_path, minetype)
+        mimetype = input('And the type of the file: ')
+        upload_file(file_name, file_path, mimetype)
     elif 'download file' in method:
         file_id = input('Please enter the file id: ')
         destination = input('Where you want to store the file: ')
